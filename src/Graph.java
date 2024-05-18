@@ -62,7 +62,7 @@ public class Graph {
         for (Vertex v : Adjlist) {
             System.out.println("顶点" + v.getName());
             for (Edge edge : v.getEdgeList()) {
-                System.out.printf("    尾部：%-10s权重：%-2d\n", edge.getTail(), edge.getWeight());
+                System.out.printf("    尾部：%-15s权重：%-2d\n", edge.getTail(), edge.getWeight());
             }
         }
     }
