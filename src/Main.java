@@ -1,6 +1,8 @@
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.*;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -19,30 +21,49 @@ public class Main {
 //            System.out.println(content);
             Graph graph = new Graph();
             generateGraph(content, graph);
-            graph.printGraph();
+//            graph.printGraph();
 
             Scanner scanner = new Scanner(System.in);
             String result;
             while (true) {
                 menu();
-                int opt = scanner.nextInt();
+                String opt = scanner.nextLine();
                 switch (opt) {
-                    case 0:
+                    case "0":
                         System.exit(0);
                         break;
-                    case 1:
+                    case "1":
                         showDirectedGraph(graph);
                         break;
-                    case 2:
+                    case "2":
                         result = queryBridgeWords("hello", "world");
                         break;
-                    case 3:
+                    case "3":
                         result = generateNewText("test");
                         break;
-                    case 4:
-                        result = calcShortestPath("hello", "world", graph);
+                    case "4":
+                        System.out.print("> 输入两个单词（用空格隔开）\n> ");
+                        String in = scanner.nextLine();
+                        String[] words = in.split(" ");
+                        // 检查词语是否合法
+                        if (words.length != 2) {
+                            System.out.println("非法的单词个数！");
+                            continue;
+                        }
+                        boolean flag = false;
+                        for (String word : words) {
+                            if (graph.findVertex(word) == null) {
+                                System.out.printf(" No \"%s\" in the graph!\n", word);
+                                flag = true;
+                            }
+                        }
+                        if (flag) {
+                            continue;
+                        }
+                        result = calcShortestPath(words[0], words[1], graph);
+                        System.out.println(result);
                         break;
-                    case 5:
+                    case "5":
                         result = randomWalk();
                         break;
                     default:
@@ -51,7 +72,6 @@ public class Main {
                 }
             }
         }
-
     }
 
     public static void menu() {
@@ -77,7 +97,6 @@ public class Main {
     }
 
     public static void showDirectedGraph(Graph graph) {
-        testGraph();
         // todo
     }
 
@@ -92,10 +111,64 @@ public class Main {
     }
 
     public static String calcShortestPath(String word1, String word2, Graph graph) {
-        boolean[] S = new boolean[graph.getN()];
-        int[] D = new int[graph.getN()];
+        int max = Integer.MAX_VALUE;
+        int n = graph.getN();
+        boolean[] S = new boolean[n];
+        int[] D = new int[n];   // 存放源点到各个顶点的最短距离
+        int[] P = new int[n];
+        Vertex node = graph.findVertex(word1);
+        int sour = node.getIndex();
+        List<Vertex> adjList = graph.getAdjlist();
 
-        return null;
+        // 初始化
+        Arrays.fill(D, max);  // 初始化为极大值
+        D[sour] = 0;
+        for (Edge edge : node.getEdgeList()) {
+            int i = edge.getTail().getIndex();
+            D[i] = edge.getWeight();
+        }
+        Arrays.fill(P, sour);
+
+        S[sour] = true;
+        for (int i=0; i < graph.getN()-1; i++) {
+            int temp = max, w = sour;
+            for (int j=0; j < graph.getN(); j++) {   // 找出V-S中，使D[w]值最小的w
+                if (!S[j] && temp > D[j]) {
+                    temp = D[j];
+                    w = j;
+                }
+            }
+
+            S[w] = true;    // 把点w加入S
+            List<Edge> edgeList_w = adjList.get(w).getEdgeList();
+            for (Edge edge : edgeList_w) {
+                int index = edge.getTail().getIndex();
+                if (!S[index]) {
+                    D[index] = Math.min(D[index], D[w] + edge.getWeight());   // 更新最短路径
+                    P[index] = w;   // 把index的最短路径的前置节点置为w
+                }
+            }
+        }
+
+        int dest = graph.findVertex(word2).getIndex();
+        if (D[dest] == max) {
+            return "节点不可达";
+        }
+        return get_path_dijkstra(adjList, P, sour, dest);
+    }
+
+    /* 向前回溯最短路径（递归）*/
+    public static String get_path_dijkstra(List<Vertex> adjlist, int[] P, int sour, int dest) {
+        String result;
+        if (dest != sour) {
+            int prev = P[dest];
+            result = get_path_dijkstra(adjlist, P, sour, prev);
+            result = result + "->" + adjlist.get(dest).getName();
+        }
+        else {
+            result = adjlist.get(dest).getName();
+        }
+        return result;
     }
 
     public static String randomWalk() {
@@ -118,4 +191,5 @@ public class Main {
 
         graph.printGraph();
     }
+
 }

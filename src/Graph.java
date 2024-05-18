@@ -18,6 +18,10 @@ public class Graph {
         return e;
     }
 
+    public List<Vertex> getAdjlist() {
+        return Adjlist;
+    }
+
     public void addVertex(String name) {
         Vertex flag = findVertex(name);
         if (flag == null) {
