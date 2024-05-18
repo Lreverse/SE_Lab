@@ -31,7 +31,7 @@ public class Main {
                         System.exit(0);
                         break;
                     case 1:
-                        showDirectedGraph();
+                        showDirectedGraph(graph);
                         break;
                     case 2:
                         result = queryBridgeWords("hello", "world");
@@ -76,7 +76,7 @@ public class Main {
         }
     }
 
-    public static void showDirectedGraph() {
+    public static void showDirectedGraph(Graph graph) {
         // todo
     }
 
