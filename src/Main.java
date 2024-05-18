@@ -40,7 +40,7 @@ public class Main {
                         result = generateNewText("test");
                         break;
                     case 4:
-                        result = calcShortestPath("hello", "world");
+                        result = calcShortestPath("hello", "world", graph);
                         break;
                     case 5:
                         result = randomWalk();
@@ -77,6 +77,7 @@ public class Main {
     }
 
     public static void showDirectedGraph(Graph graph) {
+        testGraph();
         // todo
     }
 
@@ -90,8 +91,10 @@ public class Main {
         return null;
     }
 
-    public static String calcShortestPath(String word1, String word2) {
-        // todo
+    public static String calcShortestPath(String word1, String word2, Graph graph) {
+        boolean[] S = new boolean[graph.getN()];
+        int[] D = new int[graph.getN()];
+
         return null;
     }
 

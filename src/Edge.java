@@ -1,19 +1,19 @@
 
 public class Edge {
     private int weight;  // 边的权重
-    private String tail;  // 尾部结点标识
+    private Vertex tail;  // 尾部结点标识
 
-    public Edge(String name) {
-        this.tail = name;
+    public Edge(Vertex tail) {
+        this.tail = tail;
         this.weight = 1;
     }
 
-    public String getTail() {
+    public Vertex getTail() {
         return tail;
     }
 
-    public void setTail(String name) {
-        this.tail = name;
+    public void setTail(Vertex tail) {
+        this.tail = tail;
     }
 
     public int getWeight() {
