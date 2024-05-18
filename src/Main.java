@@ -115,7 +115,7 @@ public class Main {
         int n = graph.getN();
         boolean[] S = new boolean[n];
         int[] D = new int[n];   // 存放源点到各个顶点的最短距离
-        int[] P = new int[n];
+        int[] P = new int[n];   // 存放最短路径的前驱
         Vertex node = graph.findVertex(word1);
         int sour = node.getIndex();
         List<Vertex> adjList = graph.getAdjlist();
