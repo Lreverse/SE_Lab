@@ -1,9 +1,11 @@
+import org.w3c.dom.ranges.Range;
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.*;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class Main {
     public static void main(String[] args) {
@@ -64,7 +66,18 @@ public class Main {
                         System.out.println(result);
                         break;
                     case "5":
-                        result = randomWalk();
+                        result = randomWalk(graph);
+                        Date date = new Date();
+                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+
+                        // 获取当前时间作为文件名
+                        String filepath = "./randomWalk/randomWalk-" + formatter.format(date) + ".txt";
+                        // 写入磁盘
+                        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filepath))) {
+                            bufferedWriter.write(result);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                         break;
                     default:
                         System.out.println("非法输入");
@@ -171,9 +184,39 @@ public class Main {
         return result;
     }
 
-    public static String randomWalk() {
-        // todo
-        return null;
+    public static String randomWalk(Graph graph) {
+        List<Vertex> adjList = graph.getAdjlist();
+        int N = graph.getN();
+        List<Edge> edgeList_start;
+        Random rand = new Random();
+        String result = "";
+
+        // 随机获取节点
+        Vertex start = adjList.get(rand.nextInt(N));
+        Vertex end = start;
+        boolean[][] path = new boolean[N][N];
+        result = result + start.getName() + " ";
+        System.out.print(start.getName() + " ");
+        do {
+            try {  // 休眠1秒，模拟游走的间歇感
+                TimeUnit.MILLISECONDS.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+            path[start.getIndex()][end.getIndex()] = true;
+            start = end;
+            edgeList_start = start.getEdgeList();
+            if (edgeList_start.isEmpty()) {
+//                System.out.println("(节点不存在出边)");
+                break;
+            }
+            end = edgeList_start.get(rand.nextInt(edgeList_start.size())).getTail();
+            result = result + end.getName() + " ";
+            System.out.print(end.getName() + " ");
+        } while(!path[start.getIndex()][end.getIndex()]) ;   // 判断path是否已经被走过了
+        System.out.println();
+        return result;
     }
 
     public static void testGraph() {
