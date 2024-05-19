@@ -1,11 +1,11 @@
 import java.util.*;
 
-public class Graph {
+public class MyGraph {
     private int n;  // 顶点数
     private int e;  // 边数
     private final List<Vertex> Adjlist;
 
-    public Graph() {
+    public MyGraph() {
         n = e = 0;
         Adjlist = new ArrayList<>();
     }

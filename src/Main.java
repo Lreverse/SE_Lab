@@ -1,5 +1,3 @@
-import org.w3c.dom.ranges.Range;
-
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.*;
@@ -21,7 +19,7 @@ public class Main {
 
             String content = TextProcess.text_process(file_in);
 //            System.out.println(content);
-            Graph graph = new Graph();
+            MyGraph graph = new MyGraph();
             generateGraph(content, graph);
 //            graph.printGraph();
 
@@ -99,7 +97,7 @@ public class Main {
         System.out.print("> ");
     }
 
-    public static void generateGraph(String content, Graph graph) {
+    public static void generateGraph(String content, MyGraph graph) {
         String[] words = content.split(" ");
         for (String word : words) {
             graph.addVertex(word);
@@ -109,7 +107,7 @@ public class Main {
         }
     }
 
-    public static void showDirectedGraph(Graph graph) {
+    public static void showDirectedGraph(MyGraph graph) {
         // todo
     }
 
@@ -123,7 +121,7 @@ public class Main {
         return null;
     }
 
-    public static String calcShortestPath(String word1, String word2, Graph graph) {
+    public static String calcShortestPath(String word1, String word2, MyGraph graph) {
         int max = Integer.MAX_VALUE;
         int n = graph.getN();
         boolean[] S = new boolean[n];
@@ -184,7 +182,7 @@ public class Main {
         return result;
     }
 
-    public static String randomWalk(Graph graph) {
+    public static String randomWalk(MyGraph graph) {
         List<Vertex> adjList = graph.getAdjlist();
         int N = graph.getN();
         List<Edge> edgeList_start;
@@ -220,7 +218,7 @@ public class Main {
     }
 
     public static void testGraph() {
-        Graph graph = new Graph();
+        MyGraph graph = new MyGraph();
         graph.addVertex("See");
         graph.addVertex("you");
         graph.addVertex("later");
