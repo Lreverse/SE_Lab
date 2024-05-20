@@ -1,9 +1,10 @@
+import javax.swing.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.*;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class Main {
     public static void main(String[] args) {
@@ -19,9 +20,9 @@ public class Main {
 
             String content = TextProcess.text_process(file_in);
 //            System.out.println(content);
-            Graph graph = new Graph();
+            MyGraph graph = new MyGraph();
             generateGraph(content, graph);
-//            graph.printGraph();
+//            graph.printGraph();2
 
             Scanner scanner = new Scanner(System.in);
             String result;
@@ -36,23 +37,23 @@ public class Main {
                         showDirectedGraph(graph);
                         break;
                     case "2":
-                        result = queryBridgeWords("hello", "world");
+                        String[] input = Input();
+                        if (input != null) {
+                            result = queryBridgeWords(graph, input[0].toLowerCase(), input[1].toLowerCase());
+                            System.out.println(result.replace("word1", input[0]).replace("word2", input[1]));
+                        }
                         break;
                     case "3":
-                        result = generateNewText("test");
+                        System.out.print("> ");
+                        String newText = scanner.nextLine();
+                        result = generateNewText(graph,newText);
+                        System.out.println(result);
                         break;
                     case "4":
-                        System.out.print("> 输入两个单词（用空格隔开）\n> ");
-                        String in = scanner.nextLine();
-                        String[] words = in.split(" ");
-                        // 检查词语是否合法
-                        if (words.length != 2) {
-                            System.out.println("非法的单词个数！");
-                            continue;
-                        }
+                        String[] words = Input();
                         boolean flag = false;
                         for (String word : words) {
-                            if (graph.findVertex(word) == null) {
+                            if (graph.findVertex(word.toLowerCase()) == null) {
                                 System.out.printf(" No \"%s\" in the graph!\n", word);
                                 flag = true;
                             }
@@ -60,11 +61,22 @@ public class Main {
                         if (flag) {
                             continue;
                         }
-                        result = calcShortestPath(words[0], words[1], graph);
+                        result = calcShortestPath(words[0].toLowerCase(), words[1].toLowerCase(), graph);
                         System.out.println(result);
                         break;
                     case "5":
-                        result = randomWalk();
+                        result = randomWalk(graph);
+                        Date date = new Date();
+                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+
+                        // 获取当前时间作为文件名
+                        String filepath = "./randomWalk/randomWalk-" + formatter.format(date) + ".txt";
+                        // 写入磁盘
+                        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filepath))) {
+                            bufferedWriter.write(result);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                         break;
                     default:
                         System.out.println("非法输入");
@@ -72,6 +84,28 @@ public class Main {
                 }
             }
         }
+    }
+
+    public static String[] Input() {
+        boolean continueLoop = true;
+        Scanner scanner = new Scanner(System.in);
+        while(continueLoop) {
+            try {
+                System.out.print("> 输入两个单词（用空格隔开）\n> ");
+                String in = scanner.nextLine();
+                String[] words = in.split(" ");
+                // 检查词语是否合法
+                if (words.length != 2) {
+                    System.out.println("非法的单词个数！");
+                    continue;
+                }
+                return words;
+            } catch (Exception e) {
+                // 处理异常，并设置标志为 false，以结束循环
+                continueLoop = false;
+            }
+        }
+        return null;
     }
 
     public static void menu() {
@@ -86,7 +120,7 @@ public class Main {
         System.out.print("> ");
     }
 
-    public static void generateGraph(String content, Graph graph) {
+    public static void generateGraph(String content, MyGraph graph) {
         String[] words = content.split(" ");
         for (String word : words) {
             graph.addVertex(word);
@@ -96,21 +130,80 @@ public class Main {
         }
     }
 
-    public static void showDirectedGraph(Graph graph) {
+    public static void showDirectedGraph(MyGraph graph) {
         // todo
+        JGraphTExp frame = new JGraphTExp(graph);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(400, 400);
+        frame.setVisible(true);
     }
 
-    public static String queryBridgeWords(String word1, String word2) {
+    public static String queryBridgeWords(MyGraph graph, String word1, String word2) {
         // todo
-        return null;
+        if (graph.findVertex(word1) == null || graph.findVertex(word2) == null ) {
+            return "No word1 or word2 in the graph!";
+        } else {
+            ArrayList<String> bridgeWords = new ArrayList<String>();
+            Vertex v1 = graph.findVertex(word1);
+            Vertex v2 = graph.findVertex(word2);
+            for (Edge edge : v1.getEdgeList()) {
+                Vertex posWord = edge.getTail();
+                for (Edge posEdge : posWord.getEdgeList()) {
+                    if (posEdge.getTail().equals(v2)) {
+                        bridgeWords.add(edge.getTail().getName());
+                    }
+                }
+            }
+            if (bridgeWords.isEmpty()) {
+                return "No bridge words from word1 to word2!";
+            } else if (bridgeWords.size() == 1) {
+                return "The bridge word from word1 to word2 is: " + bridgeWords.getFirst();
+            } else {
+                // 创建一个 StringBuilder 用于拼接字符串
+                StringBuilder sb = new StringBuilder();
+
+                // 遍历 ArrayList，将每个字符串连接到 StringBuilder 中
+                for (String str : bridgeWords) {
+                    sb.append(str);
+                    sb.append(", ");
+                }
+                // 去除字符串末尾多余的逗号和空格
+                sb.delete(sb.length() - 2, sb.length());
+                // 将 StringBuilder 转换为一个单独的字符串
+                return "The bridge words from word1 to word2 are: " + sb.toString();
+            }
+        }
     }
 
-    public static String generateNewText(String inputText) {
+    public static boolean insert(String text) {
+        return  text.startsWith("The");
+    }
+    public static String generateNewText(MyGraph graph, String inputText) {
         // todo
-        return null;
+        String[] mid = inputText.split(" ");
+        String[] pro = inputText.toLowerCase().split(" ");
+        // 将字符串数组转换为 ArrayList
+        ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(mid));
+//        System.out.println(arrayList);
+        int idx = 0;
+        for (int i = 0; i < mid.length - 1; i++) {
+            String res = queryBridgeWords(graph, pro[i], pro[i+1]);
+            if (insert(res)) {
+                String[] bws = res.split(": ")[1].split(", ");
+                // 创建一个随机数生成器
+                Random random = new Random();
+                // 生成一个随机索引，范围是从0到数组长度减1
+                int randomIndex = random.nextInt(bws.length);
+                // 获取随机索引位置的元素
+                String randomWord = bws[randomIndex];
+                arrayList.add(++idx,randomWord);
+            }
+            idx++;
+        }
+        return String.join(" ", arrayList);
     }
 
-    public static String calcShortestPath(String word1, String word2, Graph graph) {
+    public static String calcShortestPath(String word1, String word2, MyGraph graph) {
         int max = Integer.MAX_VALUE;
         int n = graph.getN();
         boolean[] S = new boolean[n];
@@ -171,13 +264,45 @@ public class Main {
         return result;
     }
 
-    public static String randomWalk() {
-        // todo
-        return null;
+    public static String randomWalk(MyGraph graph) {
+        List<Vertex> adjList = graph.getAdjlist();
+        int N = graph.getN();
+        List<Edge> edgeList_start;
+        Random rand = new Random();
+        StringBuilder result = new StringBuilder();
+
+        // 随机获取节点
+        Vertex start = adjList.get(rand.nextInt(N));
+        Vertex end = start;
+        boolean[][] path = new boolean[N][N];
+        result.append(start.getName()).append(" ");
+        System.out.print(start.getName() + " ");
+        do {
+            try {  // 休眠1秒，模拟游走的间歇感
+                TimeUnit.MILLISECONDS.sleep(500);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+            path[start.getIndex()][end.getIndex()] = true;
+            start = end;
+            edgeList_start = start.getEdgeList();
+            if (edgeList_start.isEmpty()) {
+//                System.out.println("(节点不存在出边)");
+                break;
+            }
+            end = edgeList_start.get(rand.nextInt(edgeList_start.size())).getTail();
+            result.append(end.getName()).append(" ");
+            System.out.print(end.getName() + " ");
+        } while(!path[start.getIndex()][end.getIndex()]) ;   // 判断path是否已经被走过了
+        System.out.println();
+        return result.toString();
     }
 
+
+
     public static void testGraph() {
-        Graph graph = new Graph();
+        MyGraph graph = new MyGraph();
         graph.addVertex("See");
         graph.addVertex("you");
         graph.addVertex("later");
