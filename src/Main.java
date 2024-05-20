@@ -187,17 +187,17 @@ public class Main {
         int N = graph.getN();
         List<Edge> edgeList_start;
         Random rand = new Random();
-        String result = "";
+        StringBuilder result = new StringBuilder();
 
         // 随机获取节点
         Vertex start = adjList.get(rand.nextInt(N));
         Vertex end = start;
         boolean[][] path = new boolean[N][N];
-        result = result + start.getName() + " ";
+        result.append(start.getName()).append(" ");
         System.out.print(start.getName() + " ");
         do {
             try {  // 休眠1秒，模拟游走的间歇感
-                TimeUnit.MILLISECONDS.sleep(1000);
+                TimeUnit.MILLISECONDS.sleep(500);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -210,11 +210,11 @@ public class Main {
                 break;
             }
             end = edgeList_start.get(rand.nextInt(edgeList_start.size())).getTail();
-            result = result + end.getName() + " ";
+            result.append(end.getName()).append(" ");
             System.out.print(end.getName() + " ");
         } while(!path[start.getIndex()][end.getIndex()]) ;   // 判断path是否已经被走过了
         System.out.println();
-        return result;
+        return result.toString();
     }
 
     public static void testGraph() {
