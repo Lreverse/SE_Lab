@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.*;
@@ -36,20 +37,19 @@ public class Main {
                         showDirectedGraph(graph);
                         break;
                     case "2":
-                        result = queryBridgeWords("hello", "world");
+                        String[] input = Input();
+                        if (input != null) {
+                            result = queryBridgeWords(graph, input[0], input[1]);
+                            System.out.println(result.replace("word1", input[0]).replace("word2", input[1]));
+                        }
                         break;
                     case "3":
-                        result = generateNewText("test");
+                        String newText = scanner.nextLine();
+                        result = generateNewText(graph,newText);
+                        System.out.print(result);
                         break;
                     case "4":
-                        System.out.print("> 输入两个单词（用空格隔开）\n> ");
-                        String in = scanner.nextLine();
-                        String[] words = in.split(" ");
-                        // 检查词语是否合法
-                        if (words.length != 2) {
-                            System.out.println("非法的单词个数！");
-                            continue;
-                        }
+                        String[] words = Input();
                         boolean flag = false;
                         for (String word : words) {
                             if (graph.findVertex(word) == null) {
@@ -85,6 +85,28 @@ public class Main {
         }
     }
 
+    public static String[] Input() {
+        boolean continueLoop = true;
+        Scanner scanner = new Scanner(System.in);
+        while(continueLoop) {
+            try {
+                System.out.print("> 输入两个单词（用空格隔开）\n> ");
+                String in = scanner.nextLine();
+                String[] words = in.split(" ");
+                // 检查词语是否合法
+                if (words.length != 2) {
+                    System.out.println("非法的单词个数！");
+                    continue;
+                }
+                return words;
+            } catch (Exception e) {
+                // 处理异常，并设置标志为 false，以结束循环
+                continueLoop = false;
+            }
+        }
+        return null;
+    }
+
     public static void menu() {
         System.out.println("\n--------------------------");
         System.out.println("1. 展示有向图");
@@ -109,16 +131,75 @@ public class Main {
 
     public static void showDirectedGraph(MyGraph graph) {
         // todo
+        JGraphTExp frame = new JGraphTExp(graph);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(400, 400);
+        frame.setVisible(true);
     }
 
-    public static String queryBridgeWords(String word1, String word2) {
+    public static String queryBridgeWords(MyGraph graph, String word1, String word2) {
         // todo
-        return null;
+        if (graph.findVertex(word1) == null || graph.findVertex(word2) == null ) {
+            return "No word1 or word2 in the graph!";
+        } else {
+            ArrayList<String> bridgeWords = new ArrayList<String>();
+            Vertex v1 = graph.findVertex(word1);
+            Vertex v2 = graph.findVertex(word2);
+            for (Edge edge : v1.getEdgeList()) {
+                Vertex posWord = edge.getTail();
+                for (Edge posEdge : posWord.getEdgeList()) {
+                    if (posEdge.getTail().equals(v2)) {
+                        bridgeWords.add(edge.getTail().getName());
+                    }
+                }
+            }
+            if (bridgeWords.isEmpty()) {
+                return "No bridge words from word1 to word2!";
+            } else if (bridgeWords.size() == 1) {
+                return "The bridge word from word1 to word2 is: " + bridgeWords.getFirst();
+            } else {
+                // 创建一个 StringBuilder 用于拼接字符串
+                StringBuilder sb = new StringBuilder();
+
+                // 遍历 ArrayList，将每个字符串连接到 StringBuilder 中
+                for (String str : bridgeWords) {
+                    sb.append(str);
+                    sb.append(", ");
+                }
+                // 去除字符串末尾多余的逗号和空格
+                sb.delete(sb.length() - 2, sb.length());
+                // 将 StringBuilder 转换为一个单独的字符串
+                return "“The bridge words from word1 to word2 are:" + sb.toString();
+            }
+        }
     }
 
-    public static String generateNewText(String inputText) {
+    public static boolean insert(String text) {
+        return  text.startsWith("The");
+    }
+    public static String generateNewText(MyGraph graph, String inputText) {
         // todo
-        return null;
+        String[] mid = inputText.split(" ");
+        String[] pro = inputText.toLowerCase().split(" ");
+        // 将字符串数组转换为 ArrayList
+        ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(mid));
+//        System.out.println(arrayList);
+        int idx = 0;
+        for (int i = 0; i < mid.length - 1; i++) {
+            String res = queryBridgeWords(graph, pro[i], pro[i+1]);
+            if (insert(res)) {
+                String[] bws = res.split(": ")[1].split(", ");
+                // 创建一个随机数生成器
+                Random random = new Random();
+                // 生成一个随机索引，范围是从0到数组长度减1
+                int randomIndex = random.nextInt(bws.length);
+                // 获取随机索引位置的元素
+                String randomWord = bws[randomIndex];
+                arrayList.add(++idx,randomWord);
+            }
+            idx++;
+        }
+        return String.join(" ", arrayList);
     }
 
     public static String calcShortestPath(String word1, String word2, MyGraph graph) {
@@ -216,6 +297,8 @@ public class Main {
         System.out.println();
         return result;
     }
+
+
 
     public static void testGraph() {
         MyGraph graph = new MyGraph();

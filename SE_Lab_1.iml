@@ -16,5 +16,8 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="jgrapht.core" level="project" />
+    <orderEntry type="library" name="github.vlsi.mxgraph.jgraphx" level="project" />
+    <orderEntry type="library" name="io7m.jgrapht.ext" level="project" />
   </component>
 </module>
