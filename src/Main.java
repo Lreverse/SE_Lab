@@ -22,7 +22,7 @@ public class Main {
 //            System.out.println(content);
             MyGraph graph = new MyGraph();
             generateGraph(content, graph);
-//            graph.printGraph();
+//            graph.printGraph();2
 
             Scanner scanner = new Scanner(System.in);
             String result;
@@ -39,20 +39,21 @@ public class Main {
                     case "2":
                         String[] input = Input();
                         if (input != null) {
-                            result = queryBridgeWords(graph, input[0], input[1]);
+                            result = queryBridgeWords(graph, input[0].toLowerCase(), input[1].toLowerCase());
                             System.out.println(result.replace("word1", input[0]).replace("word2", input[1]));
                         }
                         break;
                     case "3":
+                        System.out.print("> ");
                         String newText = scanner.nextLine();
                         result = generateNewText(graph,newText);
-                        System.out.print(result);
+                        System.out.println(result);
                         break;
                     case "4":
                         String[] words = Input();
                         boolean flag = false;
                         for (String word : words) {
-                            if (graph.findVertex(word) == null) {
+                            if (graph.findVertex(word.toLowerCase()) == null) {
                                 System.out.printf(" No \"%s\" in the graph!\n", word);
                                 flag = true;
                             }
@@ -60,7 +61,7 @@ public class Main {
                         if (flag) {
                             continue;
                         }
-                        result = calcShortestPath(words[0], words[1], graph);
+                        result = calcShortestPath(words[0].toLowerCase(), words[1].toLowerCase(), graph);
                         System.out.println(result);
                         break;
                     case "5":
@@ -169,7 +170,7 @@ public class Main {
                 // 去除字符串末尾多余的逗号和空格
                 sb.delete(sb.length() - 2, sb.length());
                 // 将 StringBuilder 转换为一个单独的字符串
-                return "“The bridge words from word1 to word2 are:" + sb.toString();
+                return "The bridge words from word1 to word2 are: " + sb.toString();
             }
         }
     }
