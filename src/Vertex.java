@@ -3,8 +3,8 @@ import java.util.List;
 
 public class Vertex {
     private final String name;   // 每个结点的名字
-    private final LinkedList<Edge> EdgeList;
-    private final int index ;
+    private final LinkedList<Edge> EdgeList;   // 边表
+    private final int index ;    // 结点编号
 
     public Vertex(String name, int index) {
         this.name = name;

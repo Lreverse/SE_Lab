@@ -3,7 +3,7 @@ import java.util.*;
 public class MyGraph {
     private int n;  // 顶点数
     private int e;  // 边数
-    private final List<Vertex> Adjlist;
+    private final List<Vertex> Adjlist;   // 邻接表
 
     public MyGraph() {
         n = e = 0;
