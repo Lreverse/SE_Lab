@@ -54,7 +54,7 @@ public class Main {
                     case "4":
                         String[] words = Input();
                         boolean flag = false;
-                        for (String word : words) {
+                        for (String word : Objects.requireNonNull(words)) {
                             if (graph.findVertex(word.toLowerCase()) == null) {
                                 System.out.printf(" No \"%s\" in the graph!\n", word);
                                 flag = true;
@@ -98,7 +98,7 @@ public class Main {
                 String[] words = in.split(" ");
                 // 检查词语是否合法
                 if (words.length != 2) {
-                    System.out.println("非法的单词个数！");
+                    System.out.println("> 非法的单词个数！");
                     continue;
                 }
                 return words;
@@ -146,7 +146,7 @@ public class Main {
         if (graph.findVertex(word1) == null || graph.findVertex(word2) == null ) {
             return "No word1 or word2 in the graph!";
         } else {
-            ArrayList<String> bridgeWords = new ArrayList<String>();
+            ArrayList<String> bridgeWords = new ArrayList<>();
             Vertex v1 = graph.findVertex(word1);
             Vertex v2 = graph.findVertex(word2);
             for (Edge edge : v1.getEdgeList()) {
@@ -173,7 +173,7 @@ public class Main {
                 // 去除字符串末尾多余的逗号和空格
                 sb.delete(sb.length() - 2, sb.length());
                 // 将 StringBuilder 转换为一个单独的字符串
-                return "The bridge words from word1 to word2 are: " + sb.toString();
+                return "The bridge words from word1 to word2 are: " + sb;
             }
         }
     }
@@ -305,7 +305,7 @@ public class Main {
         return result.toString();
     }
 
-    public static void testGraph() {
+/*    public static void testGraph() {
         MyGraph graph = new MyGraph();
         graph.addVertex("See");
         graph.addVertex("you");
@@ -319,6 +319,6 @@ public class Main {
         graph.addEdge("test.txt", "you");
 
         graph.printGraph();
-    }
+    }*/
 
 }
