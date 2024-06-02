@@ -131,11 +131,10 @@ public class Main {
     }
 
     public static void showDirectedGraph(MyGraph graph) {
-        // todo
         JGraphTExp frame = new JGraphTExp(graph);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 400);
-        frame.setVisible(true);
+//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        frame.setSize(400, 400);
+//        frame.setVisible(true);
     }
 
     public static String queryBridgeWords(MyGraph graph, String word1, String word2) {
