@@ -136,9 +136,9 @@ public class Main {
     /* 展示有向图 */
     public static void showDirectedGraph(MyGraph graph) {
         JGraphTExp frame = new JGraphTExp(graph);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 400);
-        frame.setVisible(true);
+//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        frame.setSize(400, 400);
+//        frame.setVisible(true);
     }
 
     /* 查询桥接词 */
