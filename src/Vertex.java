@@ -1,5 +1,4 @@
 import java.util.LinkedList;
-import java.util.List;
 
 public class Vertex {
     private final String name;   // 每个结点的名字
