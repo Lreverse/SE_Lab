@@ -18,8 +18,10 @@ public class Main {
                 throw new RuntimeException(e);
             }
 
+            // 文本预处理
             String content = TextProcess.text_process(file_in);
 //            System.out.println(content);
+
             MyGraph graph = new MyGraph();
             generateGraph(content, graph);
 //            graph.printGraph();2
@@ -120,6 +122,7 @@ public class Main {
         System.out.print("> ");
     }
 
+    /* 生成有向图 */
     public static void generateGraph(String content, MyGraph graph) {
         String[] words = content.split(" ");
         for (String word : words) {
@@ -130,16 +133,16 @@ public class Main {
         }
     }
 
+    /* 展示有向图 */
     public static void showDirectedGraph(MyGraph graph) {
-        // todo
         JGraphTExp frame = new JGraphTExp(graph);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(400, 400);
         frame.setVisible(true);
     }
 
+    /* 查询桥接词 */
     public static String queryBridgeWords(MyGraph graph, String word1, String word2) {
-        // todo
         if (graph.findVertex(word1) == null || graph.findVertex(word2) == null ) {
             return "No word1 or word2 in the graph!";
         } else {
@@ -178,8 +181,9 @@ public class Main {
     public static boolean insert(String text) {
         return  text.startsWith("The");
     }
+
+    /* 插入桥接词，生成新文本 */
     public static String generateNewText(MyGraph graph, String inputText) {
-        // todo
         String[] mid = inputText.split(" ");
         String[] pro = inputText.toLowerCase().split(" ");
         // 将字符串数组转换为 ArrayList
@@ -203,6 +207,7 @@ public class Main {
         return String.join(" ", arrayList);
     }
 
+    /* Dijkstra 计算最短路径 */
     public static String calcShortestPath(String word1, String word2, MyGraph graph) {
         int max = Integer.MAX_VALUE;
         int n = graph.getN();
@@ -247,7 +252,7 @@ public class Main {
         if (D[dest] == max) {
             return "节点不可达";
         }
-        return get_path_dijkstra(adjList, P, sour, dest);
+        return get_path_dijkstra(adjList, P, sour, dest) + "  " + D[dest];
     }
 
     /* 向前回溯最短路径（递归）*/
@@ -264,6 +269,7 @@ public class Main {
         return result;
     }
 
+    /* 随机游走 */
     public static String randomWalk(MyGraph graph) {
         List<Vertex> adjList = graph.getAdjlist();
         int N = graph.getN();
@@ -298,8 +304,6 @@ public class Main {
         System.out.println();
         return result.toString();
     }
-
-
 
     public static void testGraph() {
         MyGraph graph = new MyGraph();
