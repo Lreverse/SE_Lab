@@ -12,7 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class JGraphTExp extends JFrame {
-    private mxGraphComponent graphComponent;
+    private final mxGraphComponent graphComponent;
 
     public JGraphTExp(MyGraph graphIn) {
         // 创建一个有向图
