@@ -13,6 +13,26 @@
 ## 数据结构
 
 使用邻接表来存储有向图
+```java
+public class MyGraph {
+    private int n;  // 顶点数
+    private int e;  // 边数
+    private final List<Vertex> Adjlist;   // 邻接表
+}
+```
+```java
+public class Vertex {
+    private final String name;   // 每个结点的名字
+    private final LinkedList<Edge> EdgeList;   // 边表
+    private final int index;    // 结点编号
+}
+```
+```java
+public class Edge {
+    private int weight;  // 边的权重
+    private Vertex tail;  // 尾部结点标识
+}
+```
 
 ## 功能1
 
@@ -39,5 +59,6 @@
 
 ## 功能6
 
-
+随机获取初始节点，然后开始游走
+- 使用`boolean[][] path`来记录走过的路径
 
