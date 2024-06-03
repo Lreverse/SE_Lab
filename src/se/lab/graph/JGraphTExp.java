@@ -1,22 +1,34 @@
 package se.lab.graph;
 
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
 import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxRectangle;
+
 import org.jgrapht.Graph;
 import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DirectedMultigraph;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class JGraphTExp extends JFrame {
+    /**
+     * mxGraphComponent.
+     */
     private final mxGraphComponent graphComponent;
 
-    public JGraphTExp(MyGraph graphIn) {
+    /**
+     * 实现有向图的导入与可视化.
+     * @param graphIn 自定义图
+     */
+    public JGraphTExp(final MyGraph graphIn) {
         // 创建一个有向图
         Graph<String, DefaultEdge> graph = new DirectedMultigraph<>(DefaultEdge.class);
 
@@ -37,7 +49,9 @@ public class JGraphTExp extends JFrame {
         graphComponent = new mxGraphComponent(graphAdapter);
 
         // 设置组件的大小
-        graphComponent.setPreferredSize(new Dimension(800, 600));
+        final int width = 800;
+        final int height = 600;
+        graphComponent.setPreferredSize(new Dimension(width, height));
 
         getContentPane().add(graphComponent, BorderLayout.CENTER);
 
@@ -49,21 +63,21 @@ public class JGraphTExp extends JFrame {
 
         zoomInButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 graphComponent.zoomIn();
             }
         });
 
         zoomOutButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 graphComponent.zoomOut();
             }
         });
 
         resetZoomButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(final ActionEvent e) {
                 graphComponent.zoomActual();
             }
         });
@@ -80,15 +94,16 @@ public class JGraphTExp extends JFrame {
         setVisible(true);
 
         // 布局
+        final int radius = 200;
         mxCircleLayout layout = new mxCircleLayout(graphAdapter);
-        layout.setRadius(200);  // 调整圆的半径以缩短边长
+        layout.setRadius(radius);  // 调整圆的半径以缩短边长
         layout.execute(graphAdapter.getDefaultParent());
 
         // 调整图形大小和位置以适应组件
         fitGraph(graphAdapter, graphComponent);
     }
 
-    private void fitGraph(JGraphXAdapter<String, DefaultEdge> graphAdapter, mxGraphComponent graphComponent) {
+    private void fitGraph(final JGraphXAdapter<String, DefaultEdge> graphAdapter, final mxGraphComponent graphComponent) {
         // 获取图形边界
         graphAdapter.refresh();
         mxRectangle bounds = graphAdapter.getGraphBounds();
