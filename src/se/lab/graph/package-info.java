@@ -13,4 +13,4 @@
  * @since 1.0
  */
 
-package se;
+package se.lab.graph;

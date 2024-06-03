@@ -11,20 +11,27 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 主类.
+ */
 public class Main {
-    public static void main(String[] args) {
+    /**
+     * 主函数.
+     * @param args 程序的输入参数
+     */
+    public static void main(final String[] args) {
         if (args.length != 1) {
             System.out.println("只需要1个参数：文件路径");
         } else {
-            String file_in;
+            String fileIn;
             try {
-                file_in = Files.readString(Paths.get(args[0]));
+                fileIn = Files.readString(Paths.get(args[0]));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
 
             // 文本预处理
-            String content = textProcess(file_in);
+            String content = textProcess(fileIn);
 //            System.out.println(content);
 
             MyGraph graph = new MyGraph();
@@ -53,7 +60,7 @@ public class Main {
                     case "3":
                         System.out.print("> ");
                         String newText = scanner.nextLine();
-                        result = generateNewText(graph,newText);
+                        result = generateNewText(graph, newText);
                         System.out.println(result);
                         break;
                     case "4":
@@ -93,6 +100,11 @@ public class Main {
         }
     }
 
+    /**
+     * 获取输入，并进行检查.
+     *
+     * @return 输入的两个单词
+     */
     public static String[] Input() {
         boolean continueLoop = true;
         Scanner scanner = new Scanner(System.in);
