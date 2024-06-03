@@ -1,3 +1,5 @@
+package se.lab.graph;
+
 import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxRectangle;

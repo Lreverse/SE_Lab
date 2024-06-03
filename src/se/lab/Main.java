@@ -1,4 +1,9 @@
-import javax.swing.*;
+package se.lab;
+
+import se.lab.graph.Edge;
+import se.lab.graph.JGraphTExp;
+import se.lab.graph.MyGraph;
+import se.lab.graph.Vertex;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.*;
@@ -19,7 +24,7 @@ public class Main {
             }
 
             // 文本预处理
-            String content = TextProcess.text_process(file_in);
+            String content = textProcess(file_in);
 //            System.out.println(content);
 
             MyGraph graph = new MyGraph();
@@ -305,8 +310,19 @@ public class Main {
         return result.toString();
     }
 
+    // 处理文本内容
+    public static String textProcess(String content) {
+        // 去除标点符号
+        content = content.replaceAll("[^a-zA-Z\\s]", " ");
+        // 去除多余空格
+        content = content.replaceAll("\\s+", " ");
+        // 转换为小写
+        content = content.toLowerCase();
+        return content;
+    }
+
 /*    public static void testGraph() {
-        MyGraph graph = new MyGraph();
+        se.lab.graph.MyGraph graph = new se.lab.graph.MyGraph();
         graph.addVertex("See");
         graph.addVertex("you");
         graph.addVertex("later");

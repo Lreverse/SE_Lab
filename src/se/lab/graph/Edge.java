@@ -1,6 +1,17 @@
+package se.lab.graph;
 
+/**
+ * Edge类。
+ */
 public class Edge {
-    private int weight;  // 边的权重
+    /**
+     * 边的权重
+     */
+    private int weight;
+
+    /**
+     * 尾部的
+     */
     private Vertex tail;  // 尾部结点标识
 
     public Edge(Vertex tail) {

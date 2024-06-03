@@ -13,22 +13,36 @@
 ## 数据结构
 
 使用邻接表来存储有向图
+
 ```java
-public class MyGraph {
+import se.lab.graph.Vertex;
+
+public class se.lab.graph.
+
+MyGraph {
     private int n;  // 顶点数
     private int e;  // 边数
     private final List<Vertex> Adjlist;   // 邻接表
 }
 ```
+
 ```java
-public class Vertex {
+import se.lab.graph.Edge;
+import se_lab_1.Graph.Edge;
+
+public class se.lab.graph.Vertex {
     private final String name;   // 每个结点的名字
     private final LinkedList<Edge> EdgeList;   // 边表
     private final int index;    // 结点编号
 }
 ```
+
 ```java
-public class Edge {
+import se.lab.graph.Vertex;
+
+public class se_lab_1.Graph.se.lab.graph.
+
+Edge {
     private int weight;  // 边的权重
     private Vertex tail;  // 尾部结点标识
 }
