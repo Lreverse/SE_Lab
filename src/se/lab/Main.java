@@ -153,7 +153,7 @@ public class Main {
 
     /**
      * 生成有向图.
-     * @param content 输入的文本
+     * @param content 待输入的文本
      * @param graph 有向图
      */
     public static void generateGraph(final String content, final MyGraph graph) {
