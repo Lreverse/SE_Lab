@@ -261,16 +261,16 @@ public class Main {
      * @return 最短路径和距离
      */
     public static String calcShortestPath(final String word1, final String word2, final MyGraph graph) {
-        String exit_error = "";
+        String exitError = "";
         if (graph.findVertex(word1) == null) {
-            exit_error += " No \"" + word1 + "\" in the graph!";
+            exitError += "No \"" + word1 + "\" in the graph!";
             if (graph.findVertex(word2) == null) {
-                exit_error += "\n No \"" + word2 + "\" in the graph!";
+                exitError += "\nNo \"" + word2 + "\" in the graph!";
             }
-            return exit_error;
+            return exitError;
         } else if (graph.findVertex(word2) == null) {
-            exit_error += " No \"" + word2 + "\" in the graph!";
-            return exit_error;
+            exitError += "No \"" + word2 + "\" in the graph!";
+            return exitError;
         }
 
         int max = Integer.MAX_VALUE;
