@@ -74,17 +74,11 @@ public class Main {
                         break;
                     case "4":
                         String[] words = input();
-                        boolean flag = false;
-                        for (String word : Objects.requireNonNull(words)) {
-                            if (graph.findVertex(word.toLowerCase()) == null) {
-                                System.out.printf(" No \"%s\" in the graph!\n", word);
-                                flag = true;
-                            }
+                        if (words != null) {
+                            result = calcShortestPath(words[0].toLowerCase(), words[1].toLowerCase(), graph);
+                        } else {
+                            result = "";
                         }
-                        if (flag) {
-                            continue;
-                        }
-                        result = calcShortestPath(words[0].toLowerCase(), words[1].toLowerCase(), graph);
                         System.out.println(result);
                         break;
                     case "5":
@@ -267,6 +261,18 @@ public class Main {
      * @return 最短路径和距离
      */
     public static String calcShortestPath(final String word1, final String word2, final MyGraph graph) {
+        String exitError = "";
+        if (graph.findVertex(word1) == null) {
+            exitError += " No \"" + word1 + "\" in the graph!";
+            if (graph.findVertex(word2) == null) {
+                exitError += "\n No \"" + word2 + "\" in the graph!";
+            }
+            return exitError;
+        } else if (graph.findVertex(word2) == null) {
+            exitError += " No \"" + word2 + "\" in the graph!";
+            return exitError;
+        }
+
         int max = Integer.MAX_VALUE;
         int n = graph.getN();
         boolean[] S = new boolean[n];
@@ -401,7 +407,7 @@ public class Main {
         graph.addEdge("See", "you");
         graph.addEdge("See", "you");
         graph.addEdge("you", "See");
-        graph.addEdge("test.txt", "you");
+        graph.addEdge("text_file.txt", "you");
 
         graph.printGraph();
     }*/
