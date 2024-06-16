@@ -1,8 +1,7 @@
-package test;
+package se.lab;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import se.lab.Main;
 import se.lab.graph.MyGraph;
 
 import java.io.IOException;
