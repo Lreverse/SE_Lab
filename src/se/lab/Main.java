@@ -263,13 +263,13 @@ public class Main {
     public static String calcShortestPath(final String word1, final String word2, final MyGraph graph) {
         String exitError = "";
         if (graph.findVertex(word1) == null) {
-            exitError += " No \"" + word1 + "\" in the graph!";
+            exitError += "No \"" + word1 + "\" in the graph!";
             if (graph.findVertex(word2) == null) {
-                exitError += "\n No \"" + word2 + "\" in the graph!";
+                exitError += "\nNo \"" + word2 + "\" in the graph!";
             }
             return exitError;
         } else if (graph.findVertex(word2) == null) {
-            exitError += " No \"" + word2 + "\" in the graph!";
+            exitError += "No \"" + word2 + "\" in the graph!";
             return exitError;
         }
 
