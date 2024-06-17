@@ -1,25 +1,46 @@
-import javax.swing.*;
+package se.lab;
+
+import se.lab.graph.Edge;
+import se.lab.graph.JGraphTExp;
+import se.lab.graph.MyGraph;
+import se.lab.graph.Vertex;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
+import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 主类.
+ */
 public class Main {
-    public static void main(String[] args) {
+    /**
+     * 主函数.
+     * @param args 程序的输入参数
+     */
+    public static void main(final String[] args) {
         if (args.length != 1) {
             System.out.println("只需要1个参数：文件路径");
         } else {
-            String file_in;
+            String fileIn;
             try {
-                file_in = Files.readString(Paths.get(args[0]));
+                fileIn = Files.readString(Paths.get(args[0]));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
 
             // 文本预处理
-            String content = TextProcess.text_process(file_in);
+            String content = textProcess(fileIn);
 //            System.out.println(content);
 
             MyGraph graph = new MyGraph();
@@ -39,7 +60,7 @@ public class Main {
                         showDirectedGraph(graph);
                         break;
                     case "2":
-                        String[] input = Input();
+                        String[] input = input();
                         if (input != null) {
                             result = queryBridgeWords(graph, input[0].toLowerCase(), input[1].toLowerCase());
                             System.out.println(result.replace("word1", input[0]).replace("word2", input[1]));
@@ -48,22 +69,16 @@ public class Main {
                     case "3":
                         System.out.print("> ");
                         String newText = scanner.nextLine();
-                        result = generateNewText(graph,newText);
+                        result = generateNewText(graph, newText);
                         System.out.println(result);
                         break;
                     case "4":
-                        String[] words = Input();
-                        boolean flag = false;
-                        for (String word : Objects.requireNonNull(words)) {
-                            if (graph.findVertex(word.toLowerCase()) == null) {
-                                System.out.printf(" No \"%s\" in the graph!\n", word);
-                                flag = true;
-                            }
+                        String[] words = input();
+                        if (words != null) {
+                            result = calcShortestPath(words[0].toLowerCase(), words[1].toLowerCase(), graph);
+                        } else {
+                            result = "";
                         }
-                        if (flag) {
-                            continue;
-                        }
-                        result = calcShortestPath(words[0].toLowerCase(), words[1].toLowerCase(), graph);
                         System.out.println(result);
                         break;
                     case "5":
@@ -88,10 +103,15 @@ public class Main {
         }
     }
 
-    public static String[] Input() {
+    /**
+     * 获取输入，并进行检查.
+     *
+     * @return 输入的两个单词
+     */
+    public static String[] input() {
         boolean continueLoop = true;
         Scanner scanner = new Scanner(System.in);
-        while(continueLoop) {
+        while (continueLoop) {
             try {
                 System.out.print("> 输入两个单词（用空格隔开）\n> ");
                 String in = scanner.nextLine();
@@ -110,6 +130,9 @@ public class Main {
         return null;
     }
 
+    /**
+     * 菜单选择.
+     */
     public static void menu() {
         System.out.println("\n--------------------------");
         System.out.println("1. 展示有向图");
@@ -122,28 +145,41 @@ public class Main {
         System.out.print("> ");
     }
 
-    /* 生成有向图 */
-    public static void generateGraph(String content, MyGraph graph) {
+    /**
+     * 生成有向图.
+     * @param content 待输入的文本
+     * @param graph 有向图
+     */
+    public static void generateGraph(final String content, final MyGraph graph) {
         String[] words = content.split(" ");
         for (String word : words) {
             graph.addVertex(word);
         }
-        for (int i=0; i < words.length-1; i++) {
-            graph.addEdge(words[i], words[i+1]);
+        for (int i = 0; i < words.length - 1; i++) {
+            graph.addEdge(words[i], words[i + 1]);
         }
     }
 
-    /* 展示有向图 */
-    public static void showDirectedGraph(MyGraph graph) {
+    /**
+     * 展示有向图.
+     * @param graph 有向图
+     */
+    public static void showDirectedGraph(final MyGraph graph) {
         JGraphTExp frame = new JGraphTExp(graph);
 //        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //        frame.setSize(400, 400);
 //        frame.setVisible(true);
     }
 
-    /* 查询桥接词 */
-    public static String queryBridgeWords(MyGraph graph, String word1, String word2) {
-        if (graph.findVertex(word1) == null || graph.findVertex(word2) == null ) {
+    /**
+     * 查询桥接词.
+     * @param graph 有向图
+     * @param word1 词1
+     * @param word2 词2
+     * @return 词1和词2的桥接词
+     */
+    public static String queryBridgeWords(final MyGraph graph, final String word1, final String word2) {
+        if (graph.findVertex(word1) == null || graph.findVertex(word2) == null) {
             return "No word1 or word2 in the graph!";
         } else {
             ArrayList<String> bridgeWords = new ArrayList<>();
@@ -178,12 +214,22 @@ public class Main {
         }
     }
 
-    public static boolean insert(String text) {
+    /**
+     * 判断文本前缀是否为"The".
+     * @param text 待判断的文本
+     * @return 判断值
+     */
+    public static boolean insert(final String text) {
         return  text.startsWith("The");
     }
 
-    /* 插入桥接词，生成新文本 */
-    public static String generateNewText(MyGraph graph, String inputText) {
+    /**
+     * 插入桥接词，生成新文本.
+     * @param graph 有向图
+     * @param inputText 待插入的文本
+     * @return 插入桥接词后的新文本
+     */
+    public static String generateNewText(final MyGraph graph, final String inputText) {
         String[] mid = inputText.split(" ");
         String[] pro = inputText.toLowerCase().split(" ");
         // 将字符串数组转换为 ArrayList
@@ -191,7 +237,7 @@ public class Main {
 //        System.out.println(arrayList);
         int idx = 0;
         for (int i = 0; i < mid.length - 1; i++) {
-            String res = queryBridgeWords(graph, pro[i], pro[i+1]);
+            String res = queryBridgeWords(graph, pro[i], pro[i + 1]);
             if (insert(res)) {
                 String[] bws = res.split(": ")[1].split(", ");
                 // 创建一个随机数生成器
@@ -200,15 +246,33 @@ public class Main {
                 int randomIndex = random.nextInt(bws.length);
                 // 获取随机索引位置的元素
                 String randomWord = bws[randomIndex];
-                arrayList.add(++idx,randomWord);
+                arrayList.add(++idx, randomWord);
             }
             idx++;
         }
         return String.join(" ", arrayList);
     }
 
-    /* Dijkstra 计算最短路径 */
-    public static String calcShortestPath(String word1, String word2, MyGraph graph) {
+    /**
+     *  Dijkstra 计算最短路径.
+     * @param word1 词1
+     * @param word2 词2
+     * @param graph 有向图
+     * @return 最短路径和距离
+     */
+    public static String calcShortestPath(final String word1, final String word2, final MyGraph graph) {
+        String exitError = "";
+        if (graph.findVertex(word1) == null) {
+            exitError += "No \"" + word1 + "\" in the graph!";
+            if (graph.findVertex(word2) == null) {
+                exitError += "\nNo \"" + word2 + "\" in the graph!";
+            }
+            return exitError;
+        } else if (graph.findVertex(word2) == null) {
+            exitError += "No \"" + word2 + "\" in the graph!";
+            return exitError;
+        }
+
         int max = Integer.MAX_VALUE;
         int n = graph.getN();
         boolean[] S = new boolean[n];
@@ -228,9 +292,10 @@ public class Main {
         Arrays.fill(P, sour);
 
         S[sour] = true;
-        for (int i=0; i < graph.getN()-1; i++) {
-            int temp = max, w = sour;
-            for (int j=0; j < graph.getN(); j++) {   // 找出V-S中，使D[w]值最小的w
+        for (int i = 0; i < graph.getN() - 1; i++) {
+            int temp = max;
+            int w = sour;
+            for (int j = 0; j < graph.getN(); j++) {   // 找出V-S中，使D[w]值最小的w
                 if (!S[j] && temp > D[j]) {
                     temp = D[j];
                     w = j;
@@ -252,25 +317,35 @@ public class Main {
         if (D[dest] == max) {
             return "节点不可达";
         }
-        return get_path_dijkstra(adjList, P, sour, dest) + "  " + D[dest];
+        return getPathDijkstra(adjList, P, sour, dest) + "  " + D[dest];
     }
 
-    /* 向前回溯最短路径（递归）*/
-    public static String get_path_dijkstra(List<Vertex> adjlist, int[] P, int sour, int dest) {
+    /**
+     *  向前回溯最短路径（递归）.
+     * @param adjlist 邻接表
+     * @param P 最短路径前驱数组
+     * @param sour 源节点
+     * @param dest 目的节点
+     * @return 最短路径（递归）
+     */
+    public static String getPathDijkstra(final List<Vertex> adjlist, final int[] P, final int sour, final int dest) {
         String result;
         if (dest != sour) {
             int prev = P[dest];
-            result = get_path_dijkstra(adjlist, P, sour, prev);
+            result = getPathDijkstra(adjlist, P, sour, prev);
             result = result + "->" + adjlist.get(dest).getName();
-        }
-        else {
+        } else {
             result = adjlist.get(dest).getName();
         }
         return result;
     }
 
-    /* 随机游走 */
-    public static String randomWalk(MyGraph graph) {
+    /**
+     *  随机游走.
+     * @param graph 有向图
+     * @return 随机游走的路径
+     */
+    public static String randomWalk(final MyGraph graph) {
         List<Vertex> adjList = graph.getAdjlist();
         int N = graph.getN();
         List<Edge> edgeList_start;
@@ -300,13 +375,29 @@ public class Main {
             end = edgeList_start.get(rand.nextInt(edgeList_start.size())).getTail();
             result.append(end.getName()).append(" ");
             System.out.print(end.getName() + " ");
-        } while(!path[start.getIndex()][end.getIndex()]) ;   // 判断path是否已经被走过了
+        } while (!path[start.getIndex()][end.getIndex()]);   // 判断path是否已经被走过了
         System.out.println();
         return result.toString();
     }
 
+    /**
+     * 处理文本内容.
+     * @param content 待处理的文本
+     * @return 处理完的文本
+     */
+    public static String textProcess(final String content) {
+        String processedText = content;
+        // 去除标点符号
+        processedText = processedText.replaceAll("[^a-zA-Z\\s]", " ");
+        // 去除多余空格
+        processedText = processedText.replaceAll("\\s+", " ");
+        // 转换为小写
+        processedText = processedText.toLowerCase();
+        return processedText;
+    }
+
 /*    public static void testGraph() {
-        MyGraph graph = new MyGraph();
+        se.lab.graph.MyGraph graph = new se.lab.graph.MyGraph();
         graph.addVertex("See");
         graph.addVertex("you");
         graph.addVertex("later");
@@ -316,7 +407,7 @@ public class Main {
         graph.addEdge("See", "you");
         graph.addEdge("See", "you");
         graph.addEdge("you", "See");
-        graph.addEdge("test.txt", "you");
+        graph.addEdge("text_file.txt", "you");
 
         graph.printGraph();
     }*/
